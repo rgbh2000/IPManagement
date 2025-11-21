@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>IP Manager Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- 左侧栏：网卡选择与状态 -->
+        <div class="sidebar">
+            <h2>网络适配器</h2>
+            <select id="adapter-select" onchange="loadAdapterInfo()"></select>
+            
+            <div class="status-card">
+                <h3>当前状态</h3>
+                <div class="status-item">IP: <span id="curr-ip">...</span></div>
+                <div class="status-item">掩码: <span id="curr-mask">...</span></div>
+                <div class="status-item">网关: <span id="curr-gateway">...</span></div>
+                <div class="status-item">DNS: <span id="curr-dns">...</span></div>
+                <div class="status-badge" id="mode-badge">检测中...</div>
+            </div>
+
+            <button class="btn btn-primary big-btn" onclick="refreshAdapters()">刷新网卡列表</button>
+        </div>
+
+        <!-- 右侧栏：操作区域 -->
+        <div class="main-content">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('apply')">应用配置</div>
+                <div class="tab" onclick="switchTab('manage')">预设管理库</div>
+            </div>
+
+            <!-- TAB 1: 应用配置 -->
+            <div id="tab-apply" class="tab-content active">
+                <div class="form-grid">
+                    <div class="full-width">
+                        <label>选择预设快速填入:</label>
+                        <select id="quick-preset" onchange="fillFromPreset()">
+                            <option value="">-- 手动输入 --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>IP 地址</label>
+                        <input type="text" id="ip" placeholder="192.168.1.100">
+                    </div>
+                    <div class="input-group">
+                        <label>子网掩码</label>
+                        <input type="text" id="mask" placeholder="255.255.255.0">
+                    </div>
+                    <div class="input-group">
+                        <label>默认网关</label>
+                        <input type="text" id="gateway" placeholder="192.168.1.1">
+                    </div>
+                    <div class="input-group"></div> <!-- 占位 -->
+                    
+                    <div class="input-group">
+                        <label>首选 DNS</label>
+                        <input type="text" id="dns1" placeholder="8.8.8.8">
+                    </div>
+                    <div class="input-group">
+                        <label>备用 DNS</label>
+                        <input type="text" id="dns2" placeholder="114.114.114.114">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-dhcp" onclick="runDhcp()">自动获取 (DHCP)</button>
+                    <button class="btn btn-save" onclick="runStatic()">应用静态 IP</button>
+                </div>
+            </div>
+
+            <!-- TAB 2: 预设管理 (添加/删除) -->
+            <div id="tab-manage" class="tab-content">
+                <div class="preset-maker">
+                    <h3>新建预设方案</h3>
+                    <div class="form-grid dense">
+                        <div class="input-group full-width">
+                            <label>预设名称 (如: 公司, 家里)</label>
+                            <input type="text" id="p-name" style="font-weight:bold; border-color: #4facfe;">
+                        </div>
+                        <div class="input-group"><label>IP 地址</label><input type="text" id="p-ip"></div>
+                        <div class="input-group"><label>子网掩码</label><input type="text" id="p-mask"></div>
+                        <div class="input-group"><label>默认网关</label><input type="text" id="p-gateway"></div>
+                        <div class="input-group"><label>DNS 1</label><input type="text" id="p-dns1"></div>
+                        <div class="input-group full-width">
+                            <button class="btn btn-primary" onclick="saveNewPreset()">+ 添加到预设库</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>已存预设列表</h3>
+                <div id="preset-list" class="preset-list">
+                    <!-- 预设卡片会在这里生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading 遮罩 -->
+    <div id="loading" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p>正在更改系统网络配置...</p>
+    </div>
+
+    <script type="text/javascript" src="/eel.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
